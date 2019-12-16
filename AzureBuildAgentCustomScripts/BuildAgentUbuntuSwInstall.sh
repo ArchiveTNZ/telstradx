@@ -3,7 +3,6 @@
 echo "Script path on the vm is "
 echo "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-
 #-------------------------------- Azure Build Agent ------------------------------------------
 
 AzureAuthPatToken=$1
