@@ -4,7 +4,7 @@
 
 AzureAuthPatToken=$1
 AzureAgentPool=$2
-AzureBuildAgent=$3
+AzureBuildAgent=${3:-$(hostname)}
 AzureVSTSAccount=${4:-'telstradx'}
 
 echo "Installing the Linux build agent pre-requisites for Ubuntu"
@@ -17,12 +17,11 @@ sudo apt-get install -y libcurl4-openssl-dev
 echo "Installed the required packages for the linux build agent"
 
 echo "Configure and start the Azure Linux build agent"
-mkdir /usr/local/myagent
-chown root:root -R /usr/local/myagent
-wget -P /usr/local/myagent/ https://vstsagentpackage.azureedge.net/agent/2.160.1/vsts-agent-linux-x64-2.160.1.tar.gz
-tar zxvf /usr/local/myagent/vsts-agent-linux-x64-2.160.1.tar.gz -C /usr/local/myagent/
-bash /usr/local/myagent/config.sh --unattended  --url https://dev.azure.com/$AzureVSTSAccount --auth pat --token $AzureAuthPatToken --pool $AzureAgentPool --agent $AzureBuildAgent --work usr/local/agent_work
-nohup bash /usr/local/myagent/run.sh > /dev/null 2>&1 &
+mkdir /home/ubuntu/myagent
+wget -P /home/ubuntu/myagent/ https://vstsagentpackage.azureedge.net/agent/2.160.1/vsts-agent-linux-x64-2.160.1.tar.gz
+tar zxvf /home/ubuntu/myagent/vsts-agent-linux-x64-2.160.1.tar.gz -C /home/ubuntu/myagent/
+bash /home/ubuntu/myagent/config.sh --unattended --url https://dev.azure.com/$AzureVSTSAccount --auth pat --token $AzureAuthPatToken --pool $AzureAgentPool --agent $AzureBuildAgent --work usr/local/agent_work
+nohup bash /home/ubuntu/myagent/run.sh > /dev/null 2>&1 &
 echo "Linux Build Agent started running"
 
 #------------------------------------ Azure CLI -----------------------------------------------
