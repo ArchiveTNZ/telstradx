@@ -1,8 +1,5 @@
 #!/bin/bash
 
-echo "Script path on the vm is "
-echo "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
 #-------------------------------- Azure Build Agent ------------------------------------------
 
 AzureAuthPatToken=$1
@@ -21,6 +18,7 @@ echo "Installed the required packages for the linux build agent"
 
 echo "Configure and start the Azure Linux build agent"
 mkdir ~/myagent
+sudo chown root:root -R ~/myagent
 wget -P ~/myagent/ https://vstsagentpackage.azureedge.net/agent/2.160.1/vsts-agent-linux-x64-2.160.1.tar.gz
 tar zxvf ~/myagent/vsts-agent-linux-x64-2.160.1.tar.gz -C ~/myagent/
 bash ~/myagent/config.sh --unattended  --url https://dev.azure.com/$AzureVSTSAccount --auth pat --token $AzureAuthPatToken --pool $AzureAgentPool --agent $AzureBuildAgent --work usr/local/agent_work
@@ -31,7 +29,7 @@ echo "Linux Build Agent started running"
 
 echo "Installing Azure CLI"
 sudo apt-get update
-sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg
+sudo apt-get install -y ca-certificates curl apt-transport-https lsb-release gnupg
 curl -sL https://packages.microsoft.com/keys/microsoft.asc |
     gpg --dearmor |
     sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
@@ -39,7 +37,7 @@ AZ_REPO=$(lsb_release -cs)
 echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" |
     sudo tee /etc/apt/sources.list.d/azure-cli.list
 sudo apt-get update
-sudo apt-get install azure-cli
+sudo apt-get install -y azure-cli
 echo "Installed Azure CLI"
 
 #-------------------------------- Docker Engine CE ----------------------------------------------
@@ -75,7 +73,7 @@ echo "Installed kubectl"
 #-------------------------------------------- sbt ---------------------------------------------------
 
 echo "Installing sbt"
-sudo apt-get install openjdk-8-jdk
+sudo apt-get install -y openjdk-8-jdk
 echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
 curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | sudo apt-key add
 sudo apt-get update
