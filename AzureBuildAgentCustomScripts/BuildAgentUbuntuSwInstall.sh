@@ -23,8 +23,8 @@ mkdir $AzureBuildAgentHome
 wget -P $AzureBuildAgentHome/ https://vstsagentpackage.azureedge.net/agent/2.160.1/vsts-agent-linux-x64-2.160.1.tar.gz
 tar zxvf $AzureBuildAgentHome/vsts-agent-linux-x64-2.160.1.tar.gz -C $AzureBuildAgentHome/
 sudo chown $AzureAgentUserName:$AzureAgentUserName -R $AzureBuildAgentHome
-su - ubuntu -c "bash $AzureBuildAgentHome/config.sh --unattended --url https://dev.azure.com/$AzureVSTSAccount --auth pat --token $AzureAuthPatToken --pool $AzureAgentPool --agent $AzureBuildAgent --work usr/local/agent_work"
-su - ubuntu -c "nohup bash $AzureBuildAgentHome/run.sh > /dev/null 2>&1 &"
+su - $AzureAgentUserName -c "bash $AzureBuildAgentHome/config.sh --unattended --url https://dev.azure.com/$AzureVSTSAccount --auth pat --token $AzureAuthPatToken --pool $AzureAgentPool --agent $AzureBuildAgent --work usr/local/agent_work"
+su - $AzureAgentUserName -c "nohup bash $AzureBuildAgentHome/run.sh > /dev/null 2>&1 &"
 echo "Linux Build Agent started running"
 
 #------------------------------------ Azure CLI -----------------------------------------------
