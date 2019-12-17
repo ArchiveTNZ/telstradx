@@ -17,12 +17,12 @@ sudo apt-get install -y libcurl4-openssl-dev
 echo "Installed the required packages for the linux build agent"
 
 echo "Configure and start the Azure Linux build agent"
-mkdir ~/myagent
-sudo chown root:root -R ~/myagent
-wget -P ~/myagent/ https://vstsagentpackage.azureedge.net/agent/2.160.1/vsts-agent-linux-x64-2.160.1.tar.gz
-tar zxvf ~/myagent/vsts-agent-linux-x64-2.160.1.tar.gz -C ~/myagent/
-bash ~/myagent/config.sh --unattended  --url https://dev.azure.com/$AzureVSTSAccount --auth pat --token $AzureAuthPatToken --pool $AzureAgentPool --agent $AzureBuildAgent --work usr/local/agent_work
-nohup bash ~/myagent/run.sh > /dev/null 2>&1 &
+mkdir /usr/local/myagent
+chown root:root -R /usr/local/myagent
+wget -P /usr/local/myagent/ https://vstsagentpackage.azureedge.net/agent/2.160.1/vsts-agent-linux-x64-2.160.1.tar.gz
+tar zxvf /usr/local/myagent/vsts-agent-linux-x64-2.160.1.tar.gz -C /usr/local/myagent/
+bash /usr/local/myagent/config.sh --unattended  --url https://dev.azure.com/$AzureVSTSAccount --auth pat --token $AzureAuthPatToken --pool $AzureAgentPool --agent $AzureBuildAgent --work usr/local/agent_work
+nohup bash /usr/local/myagent/run.sh > /dev/null 2>&1 &
 echo "Linux Build Agent started running"
 
 #------------------------------------ Azure CLI -----------------------------------------------
