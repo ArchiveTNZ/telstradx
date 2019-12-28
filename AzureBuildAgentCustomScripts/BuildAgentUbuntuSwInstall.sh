@@ -16,6 +16,9 @@
 # Azure Build Agent name as $4 - optional, defaulted to the hostname
 # Azure VSTS Account name as $5 - optional, defaulted to 'telstradx'
 
+# logging errors
+let errorcount=0
+
 #-------------------------------- Azure Build Agent ------------------------------------------
 
 AzureAgentUserName=$1
@@ -40,10 +43,17 @@ su - $AzureAgentUserName -c "wget -P $AzureBuildAgentHome/ https://vstsagentpack
 su - $AzureAgentUserName -c "tar zxvf $AzureBuildAgentHome/vsts-agent-linux-x64-2.160.1.tar.gz -C $AzureBuildAgentHome/"
 sudo chown $AzureAgentUserName:$AzureAgentUserName -R $AzureBuildAgentHome
 su - $AzureAgentUserName -c "bash $AzureBuildAgentHome/config.sh --unattended --url https://dev.azure.com/$AzureVSTSAccount --auth pat --token $AzureAuthPatToken --pool $AzureAgentPool --agent $AzureBuildAgent --work usr/local/agent_work"
+if [[ $? -eq 0 ]]; then
+  echo "Successfully Configured Azure Linux Build Agent"
+else
+   let errorcount=$errorcount+1
+  echo "ERROR: Something went wrong while configuring Azure Linux Build Agent"
+fi 
 su - $AzureAgentUserName -c "nohup bash $AzureBuildAgentHome/run.sh > /dev/null 2>&1 &"
 if [[ $? -eq 0 ]]; then
   echo "Successfully Installed Azure Linux Build Agent"
 else
+   let errorcount=$errorcount+1
   echo "ERROR: Something went wrong while installing Azure Linux Build Agent"
 fi 
 
@@ -63,6 +73,7 @@ sudo apt-get install -y azure-cli
 if [[ $? -eq 0 ]]; then
   echo "Successfully Installed Azure CLI"
 else
+  let errorcount=$errorcount+1
   echo "ERROR: Something went wrong while installing Azure CLI"
 fi 
 
@@ -87,6 +98,7 @@ sudo apt-get install -y docker-ce=5:19.03.5~3-0~ubuntu-xenial docker-ce-cli=5:19
 if [[ $? -eq 0 ]]; then
   echo "Successfully Installed Docker Engine CE"
 else
+  let errorcount=$errorcount+1
   echo "ERROR: Something went wrong while installing Docker Engine CE"
 fi 
 
@@ -101,6 +113,7 @@ sudo apt-get install -y kubectl
 if [[ $? -eq 0 ]]; then
   echo "Successfully Installed kubectl"
 else
+  let errorcount=$errorcount+1
   echo "ERROR: Something went wrong while installing kubectl"
 fi 
 
@@ -115,6 +128,7 @@ sudo apt-get install -y sbt
 if [[ $? -eq 0 ]]; then
   echo "Successfully Installed sbt"
 else
+  let errorcount=$errorcount+1
   echo "ERROR: Something went wrong while installing sbt"
 fi 
 
@@ -134,6 +148,7 @@ sudo apt-get install -y dotnet-sdk-2.2
 if [[ $? -eq 0 ]]; then
   echo "Successfully Installed .NET core SDK and Runtime"
 else
+  let errorcount=$errorcount+1
   echo "ERROR: Something went wrong while installing .NET core SDK and Runtime"
 fi 
 
@@ -147,6 +162,7 @@ sudo apt install -y nodejs
 if [[ $? -eq 0 ]]; then
   echo "Successfully Installed nodejs and npm"
 else
+  let errorcount=$errorcount+1
   echo "ERROR: Something went wrong while installing nodejs and npm"
 fi 
 
@@ -158,7 +174,18 @@ sudo install -m 755 kubeseal /usr/local/bin/kubeseal
 if [[ $? -eq 0 ]]; then
   echo "Successfully Installed Kubeseal client"
 else
+  let errorcount=$errorcount+1
   echo "ERROR: Something went wrong while installing Kubeseal client"
 fi 
 
+#-------------------------------------------logging error------------------------------------------------
+
+if [[ $errorcount -eq 0 ]]; then
+  echo "Succesfully executed"
+  exit 0
+else
+  echo "ERROR: Something went wrong while installing software"
+  exit 1
+fi
+  
 #------------------------------------------- end of script -----------------------------------------------
